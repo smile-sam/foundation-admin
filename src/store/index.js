@@ -3,7 +3,7 @@ import Vuex from "vuex";
 import getters from "./getters";
 import app from "./modules/app";
 import settings from "./modules/settings";
-import user from "./modules/user";
+import user from "./modules/user/user";
 import flowable from "./modules/flowable";
 
 import bpmn from "./modules/bpmn";

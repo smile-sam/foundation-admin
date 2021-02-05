@@ -88,3 +88,20 @@ Modern browsers and Internet Explorer 10+.
 [MIT](https://github.com/PanJiaChen/vue-admin-template/blob/master/LICENSE) license.
 
 Copyright (c) 2017-present PanJiaChen
+
+
+```
+vue+element国际化 中英文切换table表行、表头错位问题的解决
+show-overflow-tooltip="true"表示内容超出宽度后省略号表示
+
+a表示绑定的数据
+
+b.c表示国际化zh.js,en.js中对应显示的表头名称
+
+<el-table-column
+            prop="a"
+            :label="$t('b.c')"
+            show-overflow-tooltip="true"
+ 
+            :width="($t('b.c')).length*18">
+```            

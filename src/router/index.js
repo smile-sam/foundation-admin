@@ -56,6 +56,39 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: "/system",
+    component: Layout,
+    redirect: "/system/role",
+    name: "systemManage",
+    meta: { title: "systemManage", icon: "el-icon-s-help" },
+    children: [
+      {
+        path: "role",
+        name: "roleManage",
+        component: () => import("@/views/system/role/index"),
+        meta: { title: "roleManage", icon: "table" }
+      },
+      {
+        path: "user",
+        name: "userManage",
+        component: () => import("@/views/system/user/index"),
+        meta: { title: "userManage", icon: "table" }
+      },
+      {
+        path: "menu",
+        name: "menuManage",
+        component: () => import("@/views/system/menu/index"),
+        meta: { title: "menuManage", icon: "table" }
+      },
+      {
+        path: "tree",
+        name: "Tree",
+        component: () => import("@/views/tree/index"),
+        meta: { title: "Tree", icon: "tree" }
+      }
+    ]
+  },
 
   {
     path: "/example",
@@ -155,9 +188,9 @@ export const constantRoutes = [
   {
     path: "/flowable",
     component: Layout,
-    redirect: "/flowable/custom",
-    name: "工作流",
-    meta: { title: "工作流", icon: "el-icon-s-help" },
+    redirect: "/custom2",
+    name: "flowable",
+    meta: { title: "flowable", icon: "el-icon-s-help" },
     children: [
       // {
       //   path: "flowable-create",
@@ -178,26 +211,33 @@ export const constantRoutes = [
       //   meta: { title: "自定义工作流", icon: "tree" }
       // },
       {
-        path: "custom",
-        name: "自定义工作流2",
+        path: "custom2",
+        name: "custom-flow",
         component: () => import("@/components/Bpmn/index"),
-        meta: { title: "自定义工作流2", icon: "tree" }
+        meta: { title: "custom-flow", icon: "tree" }
       }
     ]
   },
 {
     path: "/bpmn",
     component: Layout,
-    redirect: "/bpmn/custom",
-    name: "工作流",
-    meta: { title: "工作流", icon: "el-icon-s-help" },
+    redirect: "/custom3",
+    name: "bpmn",
+    meta: { title: "bpmn", icon: "el-icon-s-help" },
     children: [
       {
-        path: "custom",
-        name: "自定义工作流3",
+        path: "custom3",
+        name: "bpmn-custom",
         component: () => import("@/components/CustomBpmn/index"),
         // component: () => import("@/views/bpmn/custom/index"),
-        meta: { title: "自定义工作流3", icon: "tree" }
+        meta: { title: "bpmn-custom", icon: "tree" }
+      },
+        {
+        path: "custom4",
+        name: "bpmn-custom",
+        component: () => import("@/components/CustomBpmn2/custom/index"),
+        // component: () => import("@/views/bpmn/custom/index"),
+        meta: { title: "bpmn-custom", icon: "tree" }
       }
     ]
   },
@@ -247,7 +287,6 @@ const createRouter = () =>
 
 const router = createRouter();
 
-// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter();
   router.matcher = newRouter.matcher; // reset router

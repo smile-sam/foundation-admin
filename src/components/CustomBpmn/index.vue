@@ -1,7 +1,17 @@
 <template>
   <div class="containers">
     <div class="canvas" ref="canvas" />
-    <div id="js-properties-panel" class="panel property-panel"></div>
+    <!-- <div id="js-properties-panel" class="panel property-panel"></div> -->
+    <panel v-if="bpmnModeler" :modeler="bpmnModeler" />
+    <!-- <div class="action"> -->
+      <!-- 关于打开文件的这个我使用了Element的文件上传组件，在上传前钩子获取到文件然后读取文件内容 -->
+      <!-- <el-upload class="upload-demo" :before-upload="openBpmn">
+        <el-button icon="el-icon-folder-opened"></el-button>
+      </el-upload>
+      <el-button class="new" icon="el-icon-circle-plus" @click="newDiagram"></el-button>
+      <el-button icon="el-icon-download" @click="downloadBpmn"></el-button>
+      <el-button icon="el-icon-picture" @click="downloadSvg"></el-button>
+    </div> -->
 
 
     <ul class="buttons">
@@ -17,9 +27,6 @@
       <li>
         <a href="javascript:" @click="saveSVG" title="保存为svg">保存为SVG图片</a>
       </li> -->
-
-
-
       <li>
         <a href="javascript:" ref="saveXML" title="保存为bpmn">保存为BPMN文件</a>
       </li>
@@ -29,8 +36,6 @@
        <li>
         <a href="javascript:" @click="save" title="保存">保存</a>
       </li>
-      
-
 
     </ul>
   </div>
@@ -47,11 +52,11 @@ import { xmlStr } from '../../mock/newXmlStr'
 import customTranslate from './custom-translate/custom-translate'
 import { done } from 'nprogress'
 
-
+// import panel from './custom-panel/custom-panel';
+import panel from './custom-panel/custom-properties-panel';
 var customTranslateModule = { translate: [ 'value', customTranslate ] };
 
 export default {
-
   data(){
     return {    
       bpmnModeler: null,
@@ -60,10 +65,13 @@ export default {
       xmlStr: xmlStr
    }
   },
+  
+  components: {
+    panel
+  },
   methods: {
     async save() {
         const result = await this.bpmnModeler.saveXML({ format: true });
-        debugger
         this.$store.dispatch('flowable/save', {name: 'level.bpmn', xmlStr: result.xml}).then(() => {
           this.$router.push({ path: this.redirect || '/' })
         }).catch(() => {
@@ -79,8 +87,8 @@ export default {
           parent: '#js-properties-panel'
         },
         additionalModules:[
-          propertiesPanelModule,
-          propertiesProviderModule,
+          // propertiesPanelModule,
+          // propertiesProviderModule,
           transactionBoundariesModule,
   　　　　 customTranslateModule
   　　　],
@@ -89,6 +97,18 @@ export default {
           camunda: camundaModdleDescriptor
         }
       });
+      
+    // 监听流程图改变事件
+    const that = this;
+    this.bpmnModeler.on("commandStack.changed", function() {
+      that.saveSVG(function(err, svg) {
+        that.setEncoded(downloadSvgLink, "diagram.svg", err ? null : svg);
+      });
+      that.saveDiagram(function(err, xml) {
+        that.setEncoded(downloadLink, "diagram.bpmn", err ? null : xml);
+      });
+    });
+
 
       this.createNewDiagram();
     },
@@ -167,7 +187,24 @@ export default {
         link.href = "data:application/bpmn20-xml;charset=UTF-8," + encodedData;
         link.download = name;
       }
-    }
+    },
+
+    openBpmn(file) {
+      const reader = new FileReader();
+      // 读取File对象中的文本信息，编码格式为UTF-8
+      reader.readAsText(file, "utf-8");
+      reader.onload = () => {
+        //读取完毕后将文本信息导入到Bpmn建模器
+        this.createNewDiagram(reader.result);
+      };
+      return false;
+    },
+    newDiagram() {
+      this.createNewDiagram(this.bpmnTemplate);
+    },
+
+
+
   },
   
   async mounted() {
@@ -245,13 +282,31 @@ height: 100%;
   text-decoration: none;
 }
 .property-panel{
-      position: absolute;
+    position: absolute;
     right: 0px;
-    top: 0px;
+    top: 0;
     border-left: 1px solid #cccccc;
     padding: 20px 0;
     width: 300px;
     height: 100%;
 
 }
+
+.bpmn-js-properties-panel {
+  position: absolute;
+  top: 0;
+  right: 0px;
+  width: 300px;
+}
+
+.action {
+  position: fixed;
+  bottom: 110px;
+  left: 100px;
+  display: flex;
+}
+.upload-demo {
+  margin-right: 10px;
+}
+
 </style>
