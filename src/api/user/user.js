@@ -27,3 +27,47 @@ export function logout() {
     method: 'post'
   })
 }
+
+
+
+
+
+export function addUser(data) {
+  return request({
+    url: '/user/sysUser/add',
+    method: 'post',
+    data
+  })
+}
+
+export function updateUser(data) {
+  return request({
+    url: '/user/sysUser/update',
+    method: 'post',
+    data
+  })
+}
+
+export function getById(id) {
+  return request({
+    url: '/role/' + id,
+    method: 'get'
+  })
+}
+
+export function page(data) {
+  return request({
+    url: '/user/sysUser/page',
+    method: 'post',
+    data
+  })
+}
+export function deleteUser(data) {
+  return request({
+    url: '/user/sysUser/delete',
+    method: 'post',
+    data
+  })
+}
+
+

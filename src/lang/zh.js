@@ -1,6 +1,6 @@
 export default {
   project: {
-    name: '管理后台',
+    name: '管理后台'
   },
   route: {
     'Foundation Admin': '磐石后台管理系统',
@@ -117,7 +117,7 @@ export default {
     backToTopTips2: '可自定义按钮的样式、show/hide、出现的高度、返回的位置 如需文字提示，可在外部使用Element的el-tooltip元素',
     imageUploadTips: '由于我在使用时它只有vue@1版本，而且和mockjs不兼容，所以自己改造了一下，如果大家要使用的话，优先还是使用官方版本。'
   },
-  table: {    
+  table: {
     dynamicTips1: '固定表头, 按照表头顺序排序',
     dynamicTips2: '不固定表头, 按照点击顺序排序',
     dragTips1: '默认顺序',
@@ -132,7 +132,9 @@ export default {
     export: '导出',
     reviewer: '审核人',
     id: '序号',
+    password: '密码',
     name: '名称',
+    account: '帐号',
     date: '时间',
     author: '作者',
     readings: '阅读数',
@@ -146,6 +148,12 @@ export default {
     confirm: '确 定',
     create: '新增',
     code: '编码',
+    avatar: '头像',
+    sex: '性别',
+    phone: '电话',
+    email: '邮箱',
+    birthday: '生日',
+    identityCard: '身份证号',
     parentId: '上级主键',
     parentName: '上级名称',
     description: '说明',
@@ -192,7 +200,9 @@ export default {
   biz: {
     ID: '主键',
     name: '名称',
+    account: '帐号',
     type: '类型',
+    sex: '性别',
     state: '状态',
     deleted: '是否删除',
     createTime: '创建时间',
@@ -205,9 +215,6 @@ export default {
     updateUserName: '修改人',
     action: '操作'
   },
-
-  
-
   message: {
     'Please select': '请选择',
     'Please input': '请填写',
@@ -216,6 +223,8 @@ export default {
     'Cancel': '取消',
     'Success': '成功',
     'createSuccess': '创建成功',
+    'updateSuccess': '修改成功',
+    'deleteSuccess': '删除成功',
     'Confirm to remove the role?': '是否删除角色?',
     'Delete succed!': '删除成功!',
     'name is required': '名臣必填',

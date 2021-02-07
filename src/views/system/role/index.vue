@@ -25,10 +25,10 @@
       </el-checkbox> -->
     </div>
 
-  <el-table
+    <el-table
       :key="tableKey"
       v-loading="listLoading"
-      :data="list"
+      :data="list"      
       border
       fit
       highlight-current-row
@@ -36,12 +36,17 @@
       @sort-change="sortChange"
     >
     <!-- <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%" > -->
-      <el-table-column :label="$t('table.id')" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
+      <el-table-column :label="$t('table.id')" prop="id" type="index" :index="getTableIndex" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+        <!-- <template slot-scope="scope">
+          <span> -->
+            <!-- {{ index }} -->
+             <!-- {{ scope.$index + (scope.pageNum -1) * scope.pageSize + 1 }} -->
+            <!-- {{ scope.row.id }} -->
+            <!-- {{ scope.$index+(pageNum - 1) * pageSize + 1}} -->
+          <!-- </span> -->
+        <!-- </template> -->
       </el-table-column>
-      <el-table-column align="center" :label="$t('biz.name')">
+      <el-table-column align="center"  prop="name"  :label="$t('biz.name')" sortable="custom" :class-name="getSortClass('name')">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
@@ -70,9 +75,9 @@
           <span>{{ scope.row.deletedName }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('biz.createTime')">
+      <el-table-column  prop="create_time"  align="center" :label="$t('biz.createTime')" sortable="custom" :class-name="getSortClass('create_time')">
         <template slot-scope="scope">
-          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
+          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('biz.createUserName')">
@@ -239,6 +244,8 @@ export default {
     return {
       tableKey: 0,
       list: null,
+      pageNum: 1,
+      pageSize: 15,
       total: 0,
       pages: 0 ,
       listLoading: true,
@@ -248,7 +255,7 @@ export default {
         importance: undefined,
         name: undefined,
         type: undefined,
-        sortField: '+id'
+        sortField: '-createTime'
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
@@ -299,8 +306,9 @@ export default {
       page(this.listQuery).then(response => {
         this.list = response.data.list
         this.total = response.data.total
-        this.listLoading = false
-        
+        this.pageNum = response.data.pageNum
+        this.pageSize = response.data.pageSize
+        this.listLoading = false       
 
         // Just to simulate the time of the request
         setTimeout(() => {
@@ -310,6 +318,7 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
+      this.listQuery.pageNum = 1
       this.getList()
     },
     handleModifyStatus(row, status) {
@@ -324,12 +333,35 @@ export default {
       if (prop === 'id') {
         this.sortByID(order)
       }
+      if (prop === 'name') {
+        this.sortByName(order)
+      }
+      
+      if (prop === 'create_time') {
+        this.sortByCreateTime(order)
+      }
     },
     sortByID(order) {
       if (order === 'ascending') {
         this.listQuery.sortField = '+id'
       } else {
         this.listQuery.sortField = '-id'
+      }
+      this.handleFilter()
+    },
+    sortByName(order) {
+      if (order === 'ascending') {
+        this.listQuery.sortField = '+name'
+      } else {
+        this.listQuery.sortField = '-name'
+      }
+      this.handleFilter()
+    },
+    sortByCreateTime(order) {
+      if (order === 'ascending') {
+        this.listQuery.sortField = '+create_time'
+      } else {
+        this.listQuery.sortField = '-create_time'
       }
       this.handleFilter()
     },
@@ -358,8 +390,9 @@ export default {
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           // this.temp.author = 'vue-element-admin'
           addRole(this.temp).then(response => {
-            console.log(response)
-            this.list.unshift(response.data)
+            // console.log(response)
+            // this.list.unshift(response.data)
+
             this.dialogFormVisible = false
             this.$notify({
               title: this.generateTitle('message.Success'),
@@ -367,6 +400,8 @@ export default {
               type: 'success',
               duration: 2000
             })
+            this.getList()
+
           })
         }
       })
@@ -383,6 +418,36 @@ export default {
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
+      })
+    },
+    updateData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
+          // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          updateRole(tempData).then(response => {
+
+            this.dialogFormVisible = false
+            this.$notify({
+              title: this.generateTitle('message.Success'),
+              message: this.generateTitle('message.updateSuccess'),
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+
+
+            // const index = this.list.findIndex(v => v.id === this.temp.id)
+            // this.list.splice(index, 1, this.temp)
+            // this.dialogFormVisible = false
+            // this.$notify({
+            //   title: '成功',
+            //   message: '更新成功',
+            //   type: 'success',
+            //   duration: 2000
+            // })
+          })
+        }
       })
     },
     handleDelete({ $index, row }) {
@@ -433,6 +498,11 @@ export default {
     getSortClass: function(key) {
       const sortField = this.listQuery.sortField
       return sortField === `+${key}` ? 'ascending' : 'descending'
+    },
+    getTableIndex (index) {
+      // return index + 1;
+      // return (this.dataForm.pageNum - 1) * this.dataForm.pageSize + index + 1;
+      return (this.pageNum - 1) * this.pageSize + index + 1;
     }
   }
 }
