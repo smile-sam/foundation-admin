@@ -1,24 +1,39 @@
 import request from '@/utils/request'
 
-export function login(data) {
+export function addPermission(data) {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/user/sysPermission/add',
     method: 'post',
     data
   })
 }
 
-export function getInfo(token) {
+export function updatePermission(data) {
   return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
+    url: '/user/sysPermission/update',
+    method: 'post',
+    data
   })
 }
 
-export function logout() {
+export function getById(id) {
   return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
+    url: '/role/' + id,
+    method: 'get'
+  })
+}
+
+export function page(data) {
+  return request({
+    url: '/user/sysPermission/page',
+    method: 'post',
+    data
+  })
+}
+export function deletePermission(data) {
+  return request({
+    url: '/user/sysPermission/delete',
+    method: 'post',
+    data
   })
 }

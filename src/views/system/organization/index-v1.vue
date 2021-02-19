@@ -6,6 +6,7 @@
         placeholder="Filter keyword"
         style="margin-bottom:30px;"
       />
+      <el-button type="primary" @click="onExpand">{{ expandAll ? '收缩' : '展开' }}所有节点</el-button>
       <!-- <p>使用 scoped slot</p> -->
       <!-- <el-tree :data="rootData"
                :render-content="renderContent"
@@ -17,16 +18,17 @@
       </el-tree> -->
 
       <el-tree
-        ref="menu"
-        v-loading="isLoadingMenus"
+        ref="organization"
+        v-loading="isLoadingOrganizations"
         class="filter-tree"
         :data="rootData"
         :props="defaultProps"
         :load="loadNode"
         lazy
-        node-key="id"
         show-checkbox
         highlight-current
+        node-key="id"
+        :default-expanded-keys="expandedKeys"
         :filter-node-method="filterNode"
       >
         <span
@@ -62,10 +64,7 @@
       </el-tree>
     </div>
 
-    <el-dialog
-      :title="generateTitle(textMap[dialogStatus])"
-      :visible.sync="dialogFormVisible"
-    >
+    <el-dialog :title="generateTitle(textMap[dialogStatus])" :visible.sync="dialogFormVisible">
       <el-form
         ref="dataForm"
         :rules="rules"
@@ -95,125 +94,35 @@
                 v-model="temp.parentId"
               />
             </el-form-item>
-
-            <!-- <el-form-item :label="$t('table.parentMenu')"
-                          prop="parentMenu">
-              <el-select v-model="temp.parentId"
-                         class="filter-item"
-                         :placeholder="generateTitle('message.Please select')">
-                <el-option v-for="item in stateOptions"
-                           :key="item.key"
-                           :label="item.label"
-                           :value="item.key" />
-              </el-select>
-            </el-form-item> -->
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              :label="$t('table.code')"
-              prop="code"
-            >
+            <el-form-item :label="$t('table.code')" prop="code">
               <el-input v-model="temp.code" />
             </el-form-item>
           </el-col>
+
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item
-              :label="$t('table.name')"
-              prop="name"
-            >
+            <el-form-item :label="$t('table.name')" prop="name">
               <el-input v-model="temp.name" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              :label="$t('table.type')"
-              prop="type"
-            >
-              <el-select
-                v-model="temp.type"
-                class="filter-item"
-                :placeholder="generateTitle('message.Please select')"
-              >
-                <el-option
-                  v-for="item in typeOptions"
-                  :key="item.key"
-                  :label="item.label"
-                  :value="item.key"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('table.state')"
-              prop="state"
-            >
-              <el-select
-                v-model="temp.state"
-                class="filter-item"
-                :placeholder="generateTitle('message.Please select')"
-              >
-                <el-option
-                  v-for="item in stateOptions"
-                  :key="item.key"
-                  :label="item.label"
-                  :value="item.key"
-                />
+            <el-form-item :label="$t('table.type')" prop="type">
+              <el-select v-model="temp.type" class="filter-item" :placeholder="generateTitle('message.Please select')">
+                <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              :label="$t('table.path')"
-              prop="path"
-            >
-              <el-input v-model="temp.path" />
+            <el-form-item :label="$t('table.state')" prop="state">
+              <el-select v-model="temp.state" class="filter-item" :placeholder="generateTitle('message.Please select')">
+                <el-option v-for="item in stateOptions" :key="item.key" :label="item.label" :value="item.key" />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('table.icon')"
-              prop="icon"
-            >
-              <el-input v-model="temp.icon" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('table.classContent')"
-              prop="classContent"
-            >
-              <el-input v-model="temp.classContent" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('table.sort')"
-              prop="sort"
-            >
-              <el-input v-model="temp.sort" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              :label="$t('table.config')"
-              prop="config"
-            >
-              <el-input v-model="temp.config" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-
         <el-row>
           <el-col :span="12">
             <el-form-item :label="$t('table.description')">
@@ -227,52 +136,24 @@
           </el-col>
           <el-col :span="12" />
         </el-row>
-
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
+      <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           {{ $t('table.cancel') }}
         </el-button>
-        <el-button
-          type="primary"
-          @click="dialogStatus==='create'?createData():updateData()"
-        >
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
           {{ $t('table.confirm') }}
         </el-button>
       </div>
     </el-dialog>
 
-    <el-dialog
-      :visible.sync="dialogPvVisible"
-      title="Reading statistics"
-    >
-      <el-table
-        :data="pvData"
-        border
-        fit
-        highlight-current-row
-        style="width: 100%"
-      >
-        <el-table-column
-          prop="key"
-          label="Channel"
-        />
-        <el-table-column
-          prop="pv"
-          label="Pv"
-        />
+    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
+      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
+        <el-table-column prop="key" label="Channel" />
+        <el-table-column prop="pv" label="Pv" />
       </el-table>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          type="primary"
-          @click="dialogPvVisible = false"
-        >{{ $t('table.confirm') }}</el-button>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
       </span>
     </el-dialog>
 
@@ -281,14 +162,13 @@
 
 <script>
 import { generateTitle } from '@/utils/i18n'
-import { queryMenuTree, list, addMenu, updateMenu, deleteMenu } from '@/api/user/menu'
+import { list, page, queryOrgTree, addOrganization, updateOrganization, deleteOrganization } from '@/api/user/organization'
+
 import { parseTime } from '@/utils'
 
-import MenuSelect from '@/components/MenuSelect'
-
 export default {
-  name: 'MenuList',
-  components: { MenuSelect },
+  name: 'OrganizationList',
+  components: { },
   filters: {
     statusFilter (status) {
       const statusMap = {
@@ -305,10 +185,6 @@ export default {
       rootData: [],
       // 自己定义的用于接收tree树id的数组
       expandedKeys: [],
-      // 当前选择的节点参数
-      selectNode: {},
-      isLoadingMenus: true,
-      menus: [],
       defaultProps: {
         children: 'children',
         label: 'name',
@@ -317,10 +193,13 @@ export default {
           return !!data.leaf
         }
       },
-      nodeKey: 'id',
-      defaultCheckedKeys: [],
       filterText: '',
-
+      // 当前选择的节点参数
+      selectNode: {},
+      headNode: {},
+      headResolve: undefined,
+      isLoadingOrganizations: true,
+      expandAll: false,
       tableKey: 0,
       list: null,
       pageNum: 1,
@@ -334,31 +213,23 @@ export default {
         importance: undefined,
         name: undefined,
         type: undefined,
-        parentId: undefined,
         sortField: '-createTime'
       },
+      importanceOptions: [1, 2, 3],
       typeOptions: [{ label: '正常', key: '1' }, { label: '禁用', key: '0' }],
       stateOptions: [{ label: '正常', key: '1' }, { label: '禁用', key: '0' }],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       tempParentNode: {},
+      tempCurrentNode: {},
       temp: {
         id: undefined,
         name: '',
         code: '',
-        type: '',
-        path: '',
-        icon: '',
-        classContent: '',
-        sort: undefined,
-        config: '',
-        parentId: 0,
-        parentName: '',
         description: '',
-        state: '',
-        importance: 1
-
+        parentId: 0,
+        state: '1'
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -381,11 +252,22 @@ export default {
   },
   watch: {
     filterText (val) {
-      this.$refs.menu.filter(val)
+      this.$refs.organization.filter(val)
+    },
+    rootData: {
+      handler () {
+        // 我这里默认展开一级, 指定几级就往里遍历几层取到 id 就可以了
+        console.log('=====')
+        console.log(this.rootData)
+        this.rootData.forEach(item => {
+          this.expandedKeys.push(item.id)
+        })
+      },
+      deep: true
     }
   },
   created () {
-    // this.queryMenuTree()
+    this.queryOrgTree()
   },
   methods: {
     generateTitle,
@@ -393,39 +275,48 @@ export default {
     loadNode (node, resolve) {
       // 如果是顶级的父节点
       if (node.level === 0) {
+        this.headNode = node
+        this.headResolve = resolve
         const param = this.listQuery
         param.parentId = 0
         // 查找顶级对象
         list(param).then(res => {
           if (res.data) {
-            this.isLoadingMenus = false
+            this.isLoadingOrganizations = false
             return resolve(res.data)
           } else {
             this.$message.error(res.message)
           }
         }).catch(() => {
-          this.isLoadingMenus = false
+          this.isLoadingOrganizations = false
           const data = []
           return resolve(data)
         })
-      } else {
+      } else if (node.level > 0 && node.level < 4) {
         // 根据父节点id找寻下一级的所有节点
         const param = this.listQuery
         param.parentId = node.data.id
-
         list(param).then(res => {
           if (res.data) {
-            this.isLoadingMenus = false
+            this.isLoadingOrganizations = false
             this.expandedKeys.push(res.data.id)
             return resolve(res.data)
           } else {
             this.$message.error(res.message)
           }
         }).catch(() => {
-          this.isLoadingMenus = false
+          this.isLoadingOrganizations = false
           const data = []
           return resolve(data)
         })
+      } else {	// 懒加载方法
+        console.log('懒加载方法')
+        setTimeout(() => {
+          resolve([{
+            name: `懒加载第${node.level + 1}级` + +new Date(),
+            id: `${+new Date()}`
+          }])
+        }, 500)
       }
     },
     handleCreate (data) {
@@ -447,7 +338,7 @@ export default {
         if (valid) {
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           // this.temp.author = 'vue-element-admin'
-          addMenu(this.temp).then(response => {
+          addOrganization(this.temp).then(response => {
             // console.log(response)
             // this.list.unshift(response.data)
 
@@ -467,13 +358,15 @@ export default {
       console.log(node)
       this.temp = Object.assign({}, data) // copy obj
       // 此处必须转类型不然导致选择框默认不选中  ，显示value值
-      if (node.level == 0) {
+      if (node.level === 0) {
         this.temp.parentId = 0
         this.temp.parentName = ''
       } else {
         this.temp.parentId = node.parent.data.id
         this.temp.parentName = node.parent.data.name
       }
+
+      this.tempCurrentNode = node
       this.temp.type = String(this.temp.type)
       this.temp.state = String(this.temp.state)
       this.dialogStatus = 'update'
@@ -481,21 +374,13 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
-
-      // this.handleCreate()
-      // console.log(data)
-      // const newChild = { id: id++, label: 'testtest', children: [] };
-      // if (!data.children) {
-      //   this.$set(data, 'children', []);
-      // }
-      // data.children.push(newChild);
     },
     updateData () {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateMenu(tempData).then(response => {
+          updateOrganization(tempData).then(response => {
             this.dialogFormVisible = false
             this.$notify({
               title: this.generateTitle('message.Success'),
@@ -503,7 +388,14 @@ export default {
               type: 'success',
               duration: 2000
             })
-            this.refreshNodeBy(this.temp.parentId)
+            if (typeof (tempData.parentId) === 'undefined' || tempData.parentId === 0) {
+              // this.refreshNodeBy(tempData.id)
+              this.headNode.childNodes = []// 把存起来的node的子节点清空，不然会界面会出现重复树！
+              this.loadNode(this.headNode, this.headResolve)// 再次执行懒加载的方法
+              this.headNode.expand
+            } else {
+              this.refreshNodeBy(tempData.parentId)
+            }
           })
         }
       })
@@ -515,7 +407,7 @@ export default {
         type: 'warning'
       })
         .then(async () => {
-          await deleteMenu({ id: data.id })
+          await deleteOrganization({ id: data.id })
           this.$message({
             type: 'success',
             message: this.generateTitle('message.Delete succed!')
@@ -548,12 +440,47 @@ export default {
       console.log(checkedIds)
       console.log(checkedData)
     },
-    queryMenuTree () {
-      this.listLoading = true
-      queryMenuTree(this.listQuery).then(response => {
-        this.rootData = response.data.list
-        // this.expandedKeys.push(this.rootData[0].id)
+    // id是节点的data参数，不是node参数
+    refreshNodeBy (id) {
+      const node = this.$refs.organization.getNode(id) // 通过节点id找到对应树节点对象
 
+      node.loaded = false
+      node.expand() // 主动调用展开节点方法，重新查询该节点下的所有子节点
+    },
+    // 节点展开
+    async onExpand () {
+      try {
+        await this.$confirm('确认要展开所有节点?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        this.expandAll = !this.expandAll
+        // 改变每个节点的状态
+        this.changeTreeNodeStatus(this.$refs.organization.store.root)
+      } catch (e) {
+        this.$message({
+          type: 'info',
+          message: e === 'cancel' ? '取消操作' : '操作失败'
+        })
+      }
+    },
+    // 改变节点的状态
+    changeTreeNodeStatus (node) {
+      node.expanded = this.expandAll
+      for (let i = 0; i < node.childNodes.length; i++) {
+        // 改变节点的自身expanded状态
+        node.childNodes[i].expanded = this.expandAll
+        // 遍历子节点
+        if (node.childNodes[i].childNodes.length > 0) {
+          this.changeTreeNodeStatus(node.childNodes[i])
+        }
+      }
+    },
+    queryOrgTree () {
+      this.listLoading = true
+      queryOrgTree(this.listQuery).then(response => {
+        this.rootData = response.data
         this.listLoading = false
 
         // Just to simulate the time of the request
@@ -562,12 +489,14 @@ export default {
         }, 1.5 * 1000)
       })
     },
+
     getList () {
       this.listLoading = true
-      list(this.listQuery).then(response => {
-        this.rootData = response.data.list
-        // this.expandedKeys.push(this.rootData[0].id)
-
+      page(this.listQuery).then(response => {
+        this.list = response.data.list
+        this.total = response.data.total
+        this.pageNum = response.data.pageNum
+        this.pageSize = response.data.pageSize
         this.listLoading = false
 
         // Just to simulate the time of the request
@@ -577,8 +506,8 @@ export default {
       })
     },
     handleFilter () {
-      // this.listQuery.page = 1
-      // this.listQuery.pageNum = 1
+      this.listQuery.page = 1
+      this.listQuery.pageNum = 1
       this.getList()
     },
     handleModifyStatus (row, status) {
@@ -595,6 +524,10 @@ export default {
       }
       if (prop === 'name') {
         this.sortByName(order)
+      }
+
+      if (prop === 'account') {
+        this.sortByAccount(order)
       }
 
       if (prop === 'create_time') {
@@ -617,6 +550,15 @@ export default {
       }
       this.handleFilter()
     },
+
+    sortByAccount (order) {
+      if (order === 'ascending') {
+        this.listQuery.sortField = '+account'
+      } else {
+        this.listQuery.sortField = '-account'
+      }
+      this.handleFilter()
+    },
     sortByCreateTime (order) {
       if (order === 'ascending') {
         this.listQuery.sortField = '+create_time'
@@ -628,7 +570,6 @@ export default {
     resetTemp () {
       this.temp = {
         id: undefined,
-        parentId: undefined,
         importance: 1,
         remark: '',
         timestamp: new Date(),
@@ -637,18 +578,6 @@ export default {
         type: ''
       }
     },
-    refreshNode (id) {
-      const node = this.$refs.menu.getNode(id) // 通过节点id找到对应树节点对象
-      node.loaded = false
-      node.expand() // 主动调用展开节点方法，重新查询该节点下的所有子节点
-    },
-    // id是节点的data参数，不是node参数
-    refreshNodeBy (id) {
-      const node = this.$refs.menu.getNode(id) // 通过节点id找到对应树节点对象
-      node.loaded = false
-      node.expand() // 主动调用展开节点方法，重新查询该节点下的所有子节点
-    },
-
     handleDelete ({ $index, row }) {
       this.$confirm(this.generateTitle('message.Confirm to remove the data?'), this.generateTitle('message.Warning'), {
         confirmButtonText: this.generateTitle('table.confirm'),
@@ -656,7 +585,7 @@ export default {
         type: 'warning'
       })
         .then(async () => {
-          await deleteMenu({ id: row.id })
+          await deleteOrganization({ id: row.id })
           this.list.splice($index, 1)
           this.$message({
             type: 'success',
@@ -691,8 +620,12 @@ export default {
     getSortClass: function (key) {
       const sortField = this.listQuery.sortField
       return sortField === `+${key}` ? 'ascending' : 'descending'
+    },
+    getTableIndex (index) {
+      // return index + 1;
+      // return (this.dataForm.pageNum - 1) * this.dataForm.pageSize + index + 1;
+      return (this.pageNum - 1) * this.pageSize + index + 1
     }
-
   }
 }
 </script>
@@ -715,6 +648,7 @@ export default {
 .el-form-item {
   margin: 0 22px 22px 0;
 }
+
 .custom-tree-node {
   flex: 1;
   display: flex;

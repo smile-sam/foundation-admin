@@ -15,10 +15,10 @@ export function getInfo(token) {
   //   params: { token }
   // })
 
-    return request({
-      url: '/auth/currentUser',
-      method: 'get'
-    })
+  return request({
+    url: '/auth/currentUser',
+    method: 'get'
+  })
 }
 
 export function logout() {
@@ -27,10 +27,6 @@ export function logout() {
     method: 'post'
   })
 }
-
-
-
-
 
 export function addUser(data) {
   return request({
@@ -69,5 +65,4 @@ export function deleteUser(data) {
     data
   })
 }
-
 

@@ -3,7 +3,7 @@ import Vue from 'vue'
 import i18n from './lang' // internationalization
 
 import Cookies from 'js-cookie'
-
+import 'default-passive-events'
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
@@ -11,8 +11,7 @@ import ElementUI from 'element-ui'
 // import './styles/element-variables.scss'
 import 'element-ui/lib/theme-chalk/index.css'
 // import locale from 'element-ui/lib/locale/lang/en' // lang i18n
-import enLang from 'element-ui/lib/locale/lang/en'// 如果使用中文语言包请默认支持，无需额外引入，请删除该依赖
-
+// import enLang from 'element-ui/lib/locale/lang/en'// 如果使用中文语言包请默认支持，无需额外引入，请删除该依赖
 
 import '@/styles/index.scss' // global css
 
@@ -23,8 +22,6 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 import * as filters from './filters' // global filters
-
-
 
 /**
  * If you don't want to use mock-server
@@ -45,7 +42,7 @@ Vue.use(ElementUI, {
 })
 
 // 如果想要中文版 element-ui，按如下方式声明
-// Vue.use(ElementUI) 
+// Vue.use(ElementUI)
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })

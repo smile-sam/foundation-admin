@@ -1,40 +1,45 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name"
-                :placeholder="$t('table.name')"
-                style="width: 200px;"
-                class="filter-item"
-                @keyup.enter.native="handleFilter" />
+      <el-input
+        v-model="listQuery.name"
+        :placeholder="$t('table.name')"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
       <!-- <el-select v-model="listQuery.importance" :placeholder="$t('table.importance')" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
       </el-select> -->
-      <el-select v-model="listQuery.type"
-                 :placeholder="$t('table.type')"
-                 clearable
-                 class="filter-item"
-                 style="width: 130px">
-        <el-option v-for="item in typeOptions"
-                   :key="item.key"
-                   :label="item.label+'('+item.key+')'"
-                   :value="item.key" />
+      <el-select
+        v-model="listQuery.type"
+        :placeholder="$t('table.type')"
+        clearable
+        class="filter-item"
+        style="width: 130px"
+      >
+        <el-option v-for="item in typeOptions" :key="item.key" :label="item.label+'('+item.key+')'" :value="item.key" />
       </el-select>
       <!-- <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select> -->
-      <el-button v-waves
-                 class="filter-item"
-                 style="margin-left: 10px;"
-                 type="primary"
-                 icon="el-icon-search"
-                 @click="handleFilter">
+      <el-button
+        v-waves
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleFilter"
+      >
         {{ $t('table.search') }}
       </el-button>
-      <el-button class="filter-item"
-                 style="margin-left: 10px;"
-                 type="primary"
-                 icon="el-icon-edit"
-                 @click="handleCreate">
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px;"
+        type="primary"
+        icon="el-icon-edit"
+        @click="handleCreate"
+      >
         {{ $t('table.add') }}
       </el-button>
       <!-- <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
@@ -45,23 +50,27 @@
       </el-checkbox> -->
     </div>
 
-    <el-table :key="tableKey"
-              v-loading="listLoading"
-              :data="list"
-              border
-              fit
-              highlight-current-row
-              style="width: 100%;"
-              @sort-change="sortChange">
+    <el-table
+      :key="tableKey"
+      v-loading="listLoading"
+      :data="list"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%;"
+      @sort-change="sortChange"
+    >
       <!-- <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%" > -->
-      <el-table-column :label="$t('table.id')"
-                       prop="id"
-                       type="index"
-                       :index="getTableIndex"
-                       sortable="custom"
-                       align="center"
-                       width="80"
-                       :class-name="getSortClass('id')">
+      <el-table-column
+        :label="$t('table.id')"
+        prop="id"
+        type="index"
+        :index="getTableIndex"
+        sortable="custom"
+        align="center"
+        width="80"
+        :class-name="getSortClass('id')"
+      >
         <!-- <template slot-scope="scope">
           <span> -->
         <!-- {{ index }} -->
@@ -71,245 +80,172 @@
         <!-- </span> -->
         <!-- </template> -->
       </el-table-column>
-      <el-table-column align="center"
-                       prop="name"
-                       :label="$t('table.name')"
-                       sortable="custom"
-                       :class-name="getSortClass('name')">
+      <el-table-column
+        align="center"
+        prop="name"
+        :label="$t('table.name')"
+        sortable="custom"
+        :class-name="getSortClass('name')"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center"
-                       prop="account"
-                       :label="$t('table.account')"
-                       sortable="custom"
-                       :class-name="getSortClass('account')">
+      <el-table-column
+        align="center"
+        prop="code"
+        :label="$t('table.code')"
+        sortable="custom"
+        :class-name="getSortClass('code')"
+      >
         <template slot-scope="scope">
-          <span>{{ scope.row.account }}</span>
+          <span>{{ scope.row.code }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center"
-                       :label="$t('table.type')"
-                       width="80">
+      <el-table-column align="center" :label="$t('table.type')" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.typeName }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center"
-                       :label="$t('table.state')"
-                       width="80">
+      <el-table-column align="center" :label="$t('table.state')" width="80">
         <template slot-scope="scope">
           <el-tag>{{ scope.row.stateName }}</el-tag>
         </template>
-        <!-- <template slot-scope="{row}"> -->
-
-        <!-- <el-tag :type="row.state | statusFilter" v-if="row.state == 1">
-             正常
-          </el-tag>
-          <el-tag :type="row.state | statusFilter" v-if="row.state == 0">
-             禁用
-          </el-tag> -->
-        <!-- </template> -->
       </el-table-column>
-      <el-table-column align="center"
-                       :label="$t('table.sex')"
-                       width="80">
-        <template slot-scope="scope">
-          <el-tag>{{ scope.row.sex | sexFilter }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center"
-                       :label="$t('table.deleted')"
-                       width="80">
+      <el-table-column align="center" :label="$t('table.deleted')" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.deletedName }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="create_time"
-                       align="center"
-                       :label="$t('table.createTime')"
-                       sortable="custom"
-                       :class-name="getSortClass('create_time')">
+      <el-table-column
+        prop="create_time"
+        align="center"
+        :label="$t('table.createTime')"
+        sortable="custom"
+        :class-name="getSortClass('create_time')"
+      >
         <template slot-scope="scope">
           <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center"
-                       :label="$t('table.createUserName')">
+      <el-table-column align="center" :label="$t('table.createUserName')">
         <template slot-scope="scope">
           <span>{{ scope.row.createUserName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')"
-                       align="center"
-                       width="230"
-                       class-name="small-padding fixed-width">
+      <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary"
-                     size="mini"
-                     @click="handleUpdate(scope)">
+          <el-button type="primary" size="mini" @click="handleUpdate(scope)">
             {{ $t('table.edit') }}
           </el-button>
-          <el-button type="danger"
-                     size="mini"
-                     @click="handleDelete(scope)">
+          <el-button type="danger" size="mini" @click="handleDelete(scope)">
             {{ $t('table.delete') }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0"
-                :total="total"
-                :page.sync="listQuery.pageNum"
-                :limit.sync="listQuery.pageSize"
-                @pagination="getList" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.pageNum"
+      :limit.sync="listQuery.pageSize"
+      @pagination="getList"
+    />
 
-    <el-dialog :title="generateTitle(textMap[dialogStatus])"
-               :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm"
-               :rules="rules"
-               :model="temp"
-               label-position="left"
-               label-width="70px"
-               class="form-container">
+    <el-dialog :title="generateTitle(textMap[dialogStatus])" :visible.sync="dialogFormVisible">
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="70px"
+        class="form-container"
+      >
         <el-row>
+
           <el-col :span="12">
-            <el-form-item :label="$t('table.account')"
-                          prop="account">
-              <el-input v-model="temp.account" />
+            <el-form-item :label="$t('table.parentId')" prop="parentId">
+              <el-select v-model="temp.parentId" class="filter-item" :placeholder="generateTitle('message.Please select')">
+                <el-option v-for="item in stateOptions" :key="item.key" :label="item.label" :value="item.key" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="$t('table.name')"
-                          prop="name">
+            <el-form-item :label="$t('table.sort')" prop="sort">
+              <el-input v-model="temp.sort" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+
+          <el-col :span="12">
+            <el-form-item :label="$t('table.code')" prop="code">
+              <el-input v-model="temp.code" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="$t('table.name')" prop="name">
               <el-input v-model="temp.name" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="$t('table.password')"
-                          prop="password">
-              <el-input v-model="temp.password"
-                        type="password" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="$t('table.type')"
-                          prop="type">
-              <el-select v-model="temp.type"
-                         class="filter-item"
-                         :placeholder="generateTitle('message.Please select')">
-                <el-option v-for="item in typeOptions"
-                           :key="item.key"
-                           :label="item.label"
-                           :value="item.key" />
+            <el-form-item :label="$t('table.type')" prop="type">
+              <el-select v-model="temp.type" class="filter-item" :placeholder="generateTitle('message.Please select')">
+                <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" />
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item :label="$t('table.state')" prop="state">
+              <el-select v-model="temp.state" class="filter-item" :placeholder="generateTitle('message.Please select')">
+                <el-option v-for="item in stateOptions" :key="item.key" :label="item.label" :value="item.key" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="$t('table.state')"
-                          prop="state">
-              <el-select v-model="temp.state"
-                         class="filter-item"
-                         :placeholder="generateTitle('message.Please select')">
-                <el-option v-for="item in stateOptions"
-                           :key="item.key"
-                           :label="item.label"
-                           :value="item.key" />
-              </el-select>
+            <el-form-item :label="$t('table.icon')">
+              <el-input v-model="temp.icon" type="input" :placeholder="generateTitle('message.Please input')" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="$t('table.sex')"
-                          prop="sex">
-              <el-select v-model="temp.sex"
-                         class="filter-item"
-                         :placeholder="generateTitle('message.Please select')">
-                <el-option v-for="item in stateOptions"
-                           :key="item.key"
-                           :label="item.label"
-                           :value="item.key" />
-              </el-select>
+            <el-form-item :label="$t('table.config')">
+              <el-input v-model="temp.config" type="input" :placeholder="generateTitle('message.Please input')" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item :label="$t('table.avatar')">
-              <el-input v-model="temp.avatar"
-                        type="input"
-                        :placeholder="generateTitle('message.Please input')" />
+            <el-form-item :label="$t('table.description')">
+              <el-input v-model="temp.description" type="input" :placeholder="generateTitle('message.Please input')" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item :label="$t('table.phone')">
-              <el-input v-model="temp.phone"
-                        type="input"
-                        :placeholder="generateTitle('message.Please input')" />
-            </el-form-item>
-          </el-col>
+          <el-col :span="12" />
         </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="$t('table.email')">
-              <el-input v-model="temp.email"
-                        type="input"
-                        :placeholder="generateTitle('message.Please input')" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item :label="$t('table.birthday')"
-                          prop="birthday">
-              <el-date-picker v-model="temp.birthday"
-                              type="date"
-                              placeholder="Please pick a date" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="$t('table.identityCard')">
-              <el-input v-model="temp.identityCard"
-                        type="input"
-                        :placeholder="generateTitle('message.Please input')" />
-            </el-form-item>
-          </el-col>
-        </el-row>
+
       </el-form>
-      <div slot="footer"
-           class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           {{ $t('table.cancel') }}
         </el-button>
-        <el-button type="primary"
-                   @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
           {{ $t('table.confirm') }}
         </el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible"
-               title="Reading statistics">
-      <el-table :data="pvData"
-                border
-                fit
-                highlight-current-row
-                style="width: 100%">
-        <el-table-column prop="key"
-                         label="Channel" />
-        <el-table-column prop="pv"
-                         label="Pv" />
+    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
+      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
+        <el-table-column prop="key" label="Channel" />
+        <el-table-column prop="pv" label="Pv" />
       </el-table>
-      <span slot="footer"
-            class="dialog-footer">
-        <el-button type="primary"
-                   @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
       </span>
     </el-dialog>
 
@@ -318,26 +254,13 @@
 
 <script>
 import { generateTitle } from '@/utils/i18n'
-import { page, addUser, updateUser, deleteUser, getUser } from '@/api/user/user'
+import { page, addPermission, updatePermission, deletePermission } from '@/api/user/permission'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
-
 export default {
-  name: 'UserList',
+  name: 'PermissionList',
   components: { Pagination },
   directives: { waves },
   filters: {
@@ -348,13 +271,6 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
-    },
-    sexFilter (sex) {
-      const sexMap = {
-        1: '男',
-        2: '女'
-      }
-      return sexMap[sex]
     }
   },
   data () {
@@ -375,7 +291,6 @@ export default {
         sortField: '-createTime'
       },
       importanceOptions: [1, 2, 3],
-      calendarTypeOptions,
       typeOptions: [{ label: '正常', key: '1' }, { label: '禁用', key: '0' }],
       stateOptions: [{ label: '正常', key: '1' }, { label: '禁用', key: '0' }],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -383,18 +298,16 @@ export default {
       showReviewer: false,
       temp: {
         id: undefined,
+        code: '',
         name: '',
-        nickName: '',
-        password: '',
-        account: '',
         type: '',
-        avatar: '',
-        sex: '1',
-        phone: '',
-        email: '',
-        identityCard: '',
-        birthday: new Date(),
-        state: '1'
+        parentId: undefined,
+        icon: '',
+        sort: 1,
+        config: '',
+        description: '',
+        state: '1',
+        deleted: 0
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -456,8 +369,8 @@ export default {
         this.sortByName(order)
       }
 
-      if (prop === 'account') {
-        this.sortByAccount(order)
+      if (prop === 'code') {
+        this.sortByCode(order)
       }
 
       if (prop === 'create_time') {
@@ -481,11 +394,11 @@ export default {
       this.handleFilter()
     },
 
-    sortByAccount (order) {
+    sortByCode (order) {
       if (order === 'ascending') {
-        this.listQuery.sortField = '+account'
+        this.listQuery.sortField = '+code'
       } else {
-        this.listQuery.sortField = '-account'
+        this.listQuery.sortField = '-code'
       }
       this.handleFilter()
     },
@@ -521,7 +434,7 @@ export default {
         if (valid) {
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           // this.temp.author = 'vue-element-admin'
-          addUser(this.temp).then(response => {
+          addPermission(this.temp).then(response => {
             // console.log(response)
             // this.list.unshift(response.data)
 
@@ -542,10 +455,9 @@ export default {
       // 此处必须转类型不然导致选择框默认不选中  ，显示value值
       // this.dictInfoForm.type = String(this.dictInfoForm.type);    //转换为String类型
       // this.dictInfoForm.type = Number(this.dictInfoForm.type);  //转换为Number类型
-      this.temp.sex = String(this.temp.sex)
+
       this.temp.type = String(this.temp.type)
       this.temp.state = String(this.temp.state)
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -557,7 +469,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateUser(tempData).then(response => {
+          updatePermission(tempData).then(response => {
             this.dialogFormVisible = false
             this.$notify({
               title: this.generateTitle('message.Success'),
@@ -587,7 +499,7 @@ export default {
         type: 'warning'
       })
         .then(async () => {
-          await deleteUser({ id: row.id })
+          await deletePermission({ id: row.id })
           this.list.splice($index, 1)
           this.$message({
             type: 'success',
@@ -595,12 +507,6 @@ export default {
           })
         })
         .catch(err => { console.error(err) })
-    },
-    handleFetchPv (pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
     },
     handleDownload () {
       this.downloadLoading = true

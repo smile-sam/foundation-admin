@@ -46,17 +46,17 @@
           <!-- </span> -->
         <!-- </template> -->
       </el-table-column>
-      <el-table-column align="center"  prop="name"  :label="$t('biz.name')" sortable="custom" :class-name="getSortClass('name')">
+      <el-table-column align="center"  prop="name"  :label="$t('table.name')" sortable="custom" :class-name="getSortClass('name')">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('biz.type')" width="80">
+      <el-table-column align="center" :label="$t('table.type')" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.typeName }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('biz.state')" width="80">
+      <el-table-column align="center" :label="$t('table.state')" width="80">
         <template slot-scope="scope">
          <el-tag>{{ scope.row.stateName }}</el-tag>
         </template>
@@ -70,17 +70,17 @@
           </el-tag> -->
         <!-- </template> -->
       </el-table-column>
-      <el-table-column align="center" :label="$t('biz.deleted')" width="80">
+      <el-table-column align="center" :label="$t('table.deleted')" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.deletedName }}</span>
         </template>
       </el-table-column>
-      <el-table-column  prop="create_time"  align="center" :label="$t('biz.createTime')" sortable="custom" :class-name="getSortClass('create_time')">
+      <el-table-column  prop="create_time"  align="center" :label="$t('table.createTime')" sortable="custom" :class-name="getSortClass('create_time')">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" :label="$t('biz.createUserName')">
+      <el-table-column align="center" :label="$t('table.createUserName')">
         <template slot-scope="scope">
           <span>{{ scope.row.createUserName }}</span>
         </template>

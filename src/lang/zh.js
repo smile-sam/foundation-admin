@@ -71,7 +71,10 @@ export default {
     systemManage: '系统管理',
     roleManage: '角色管理',
     userManage: '用户管理',
-    menuManage: '菜单管理'
+    menuManage: '菜单管理',
+    permissionManage: '权限管理',
+    organizationManage: '组织管理',
+    groupManage: '用户组管理'
   },
   navbar: {
     dashboard: '首页',
@@ -157,7 +160,25 @@ export default {
     parentId: '上级主键',
     parentName: '上级名称',
     description: '说明',
-    permission: '权限'
+    permission: '权限',
+
+    parentMenu: '上级菜单',
+    path: '路径',
+    icon: '图标',
+    classContent: '样式',
+    sort: '排序',
+    config: '配置',
+    ID: '主键',
+    deleted: '是否删除',
+    createTime: '创建时间',
+    createUserId: '创建人主键',
+    updateTime: '修改时间',
+    updateUserId: '修改人主键',
+    startTime: '开始时间',
+    endTime: '结束时间',
+    createUserName: '创建人',
+    updateUserName: '修改人',
+    action: '操作'
   },
   example: {
     warning: '创建和编辑页面是不能被 keep-alive 缓存的，因为keep-alive 的 include 目前不支持根据路由来缓存，所以目前都是基于 component name 来进行缓存的。如果你想类似的实现缓存效果，可以使用 localStorage 等浏览器缓存方案。或者不要使用 keep-alive 的 include，直接缓存所有页面。详情见'
@@ -197,24 +218,6 @@ export default {
     fixedHeader: '固定 Header',
     sidebarLogo: '侧边栏 Logo'
   },
-  biz: {
-    ID: '主键',
-    name: '名称',
-    account: '帐号',
-    type: '类型',
-    sex: '性别',
-    state: '状态',
-    deleted: '是否删除',
-    createTime: '创建时间',
-    createUserId: '创建人主键',
-    updateTime: '修改时间',
-    updateUserId: '修改人主键',
-    startTime: '开始时间',
-    endTime: '结束时间',
-    createUserName: '创建人',
-    updateUserName: '修改人',
-    action: '操作'
-  },
   message: {
     'Please select': '请选择',
     'Please input': '请填写',
@@ -226,6 +229,7 @@ export default {
     'updateSuccess': '修改成功',
     'deleteSuccess': '删除成功',
     'Confirm to remove the role?': '是否删除角色?',
+    'Confirm to remove the data?': '是否删除选中数据?',
     'Delete succed!': '删除成功!',
     'name is required': '名臣必填',
     'code is required': '编码必填',
@@ -233,6 +237,10 @@ export default {
     'type is required': '类型必填',
     'timestamp is required': '时间必填',
     'title is required': '标题必填'
+  },
+  button: {
+    append: '新增',
+    delete: '删除'
   }
 
 }

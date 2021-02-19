@@ -1,16 +1,16 @@
 import request from '@/utils/request'
 
-export function addRole(data) {
+export function addGroup(data) {
   return request({
-    url: '/user/sysRole/add',
+    url: '/user/sysGroup/add',
     method: 'post',
     data
   })
 }
 
-export function updateRole(data) {
+export function updateGroup(data) {
   return request({
-    url: '/user/sysRole/update',
+    url: '/user/sysGroup/update',
     method: 'post',
     data
   })
@@ -25,16 +25,15 @@ export function getById(id) {
 
 export function page(data) {
   return request({
-    url: '/user/sysRole/page',
+    url: '/user/sysGroup/page',
     method: 'post',
     data
   })
 }
-export function deleteRole(data) {
+export function deleteGroup(data) {
   return request({
-    url: '/user/sysRole/delete',
+    url: '/user/sysGroup/delete',
     method: 'post',
     data
   })
 }
-

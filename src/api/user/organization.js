@@ -1,16 +1,16 @@
 import request from '@/utils/request'
 
-export function addMenu(data) {
+export function addOrganization(data) {
   return request({
-    url: '/user/sysMenu/add',
+    url: '/user/sysOrganization/add',
     method: 'post',
     data
   })
 }
 
-export function updateMenu(data) {
+export function updateOrganization(data) {
   return request({
-    url: '/user/sysMenu/update',
+    url: '/user/sysOrganization/update',
     method: 'post',
     data
   })
@@ -18,37 +18,38 @@ export function updateMenu(data) {
 
 export function getById(id) {
   return request({
-    url: '/menu/' + id,
+    url: '/role/' + id,
     method: 'get'
   })
 }
 
 export function page(data) {
   return request({
-    url: '/user/sysMenu/page',
+    url: '/user/sysOrganization/page',
     method: 'post',
     data
   })
 }
+
 export function list(data) {
   return request({
-    url: '/user/sysMenu/list',
+    url: '/user/sysOrganization/list',
     method: 'post',
     data
   })
 }
 
-export function queryMenuTree(data) {
+export function queryOrgTree(data) {
   return request({
-    url: '/user/sysMenu/queryMenuTree',
+    url: '/user/sysOrganization/queryOrgTree',
     method: 'post',
     data
   })
 }
 
-export function deleteMenu(data) {
+export function deleteOrganization(data) {
   return request({
-    url: '/user/sysMenu/delete',
+    url: '/user/sysOrganization/delete',
     method: 'post',
     data
   })
