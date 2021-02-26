@@ -77,9 +77,11 @@ export default {
     groupManage: '用户组管理'
   },
   navbar: {
+    home: '首页',
     dashboard: '首页',
     github: '项目地址',
-    logOut: '退出登录',
+    // logOut: '退出登录',
+    logout: '退出登录',
     profile: '个人中心',
     theme: '换肤',
     size: '布局大小'
@@ -91,6 +93,7 @@ export default {
     password: '密码',
     any: '随便填',
     thirdparty: '第三方登录',
+    captchaCode: '验证码',
     thirdpartyTips: '本地不能模拟，请结合自己业务进行模拟！！！'
   },
   documentation: {
@@ -219,6 +222,7 @@ export default {
     sidebarLogo: '侧边栏 Logo'
   },
   message: {
+    'required': '此项为必填项',
     'Please select': '请选择',
     'Please input': '请填写',
     'Warning': '提示',
@@ -231,12 +235,14 @@ export default {
     'Confirm to remove the role?': '是否删除角色?',
     'Confirm to remove the data?': '是否删除选中数据?',
     'Delete succed!': '删除成功!',
-    'name is required': '名臣必填',
+    'name is required': '名称必填',
+    'captchaCode is required': '验证码必填',
     'code is required': '编码必填',
     'state is required': '状态必填',
     'type is required': '类型必填',
     'timestamp is required': '时间必填',
-    'title is required': '标题必填'
+    'title is required': '标题必填',
+    'please input correct captchaCode': '请输入正确的验证码'
   },
   button: {
     append: '新增',

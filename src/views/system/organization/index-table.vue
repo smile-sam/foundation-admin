@@ -122,10 +122,20 @@
       </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" width="160" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleUpdate(scope)">
+          <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope)"
+          >
             {{ $t('table.edit') }}
           </el-button>
-          <el-button type="danger" size="mini" @click="handleDelete(scope)">
+          <el-button
+            type="danger"
+            size="mini"
+            icon="el-icon-delete"
+            @click="handleDelete(scope)"
+          >
             {{ $t('table.delete') }}
           </el-button>
         </template>

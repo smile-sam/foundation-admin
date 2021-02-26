@@ -1,175 +1,239 @@
 <template>
-  <div v-if="show"
-       class="panelWrapper">
+  <div
+    v-if="show"
+    class="panelWrapper"
+  >
     <div class="panelHeader">{{ form.id }}</div>
-    <el-form class="panelForm"
-             :model="form"
-             label-position="top">
+    <el-form
+      class="panelForm"
+      :model="form"
+      label-position="top"
+    >
       <el-tabs v-model="activeName">
-        <el-tab-pane label="普通"
-                     name="general">
+        <el-tab-pane
+          label="普通"
+          name="general"
+        >
           <el-form-item label="Id">
-            <el-input v-model="form.id"
-                      size="mini"
-                      @change="v=>updateAttr('id',v)" />
+            <el-input
+              v-model="form.id"
+              size="mini"
+              @change="v=>updateAttr('id',v)"
+            />
           </el-form-item>
           <el-form-item label="名称">
-            <el-input v-model="form.name"
-                      size="mini"
-                      @change="v=>updateAttr('name',v)" />
+            <el-input
+              v-model="form.name"
+              size="mini"
+              @change="v=>updateAttr('name',v)"
+            />
           </el-form-item>
           <template v-if="['bpmn:StartEvent'].includes(businessObject.$type)">
             <template v-if="startEventType=='bpmn:TimerEventDefinition'">
               <el-form-item label="Timer Definition Type">
-                <el-select v-model="timeDefinitionType"
-                           size="mini"
-                           style="width:100%"
-                           placeholder="请选择"
-                           @change="updateTime">
-                  <el-option v-for="item in timeDefinitionTypeList"
-                             :key="item"
-                             :label="item"
-                             :value="item" />
+                <el-select
+                  v-model="timeDefinitionType"
+                  size="mini"
+                  style="width:100%"
+                  placeholder="请选择"
+                  @change="updateTime"
+                >
+                  <el-option
+                    v-for="item in timeDefinitionTypeList"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
                 </el-select>
               </el-form-item>
               <template v-if="timeDefinitionType">
-                <el-form-item label="Timer Definition"
-                              required>
-                  <el-date-picker v-if="timeDefinitionType=='Date'"
-                                  v-model="FormalExpression.body"
-                                  size="mini"
-                                  style="width:100%"
-                                  value-format="yyyy-MM-dd HH:mm:ss"
-                                  type="datetime"
-                                  placeholder="请选择"
-                                  @change="updateProperties" />
-                  <el-input v-else
-                            v-model="FormalExpression.body"
-                            size="mini"
-                            @change="updateProperties" />
+                <el-form-item
+                  label="Timer Definition"
+                  required
+                >
+                  <el-date-picker
+                    v-if="timeDefinitionType=='Date'"
+                    v-model="FormalExpression.body"
+                    size="mini"
+                    style="width:100%"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    type="datetime"
+                    placeholder="请选择"
+                    @change="updateProperties"
+                  />
+                  <el-input
+                    v-else
+                    v-model="FormalExpression.body"
+                    size="mini"
+                    @change="updateProperties"
+                  />
                 </el-form-item>
-                <el-form-item v-if="timeDefinitionType=='Cycle'"
-                              label="endDate">
-                  <el-date-picker v-model="FormalExpression.endDate"
-                                  style="width:100%"
-                                  size="mini"
-                                  value-format="yyyy-MM-dd HH:mm:ss"
-                                  type="datetime"
-                                  placeholder="请选择"
-                                  @change="updateProperties" />
+                <el-form-item
+                  v-if="timeDefinitionType=='Cycle'"
+                  label="endDate"
+                >
+                  <el-date-picker
+                    v-model="FormalExpression.endDate"
+                    style="width:100%"
+                    size="mini"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    type="datetime"
+                    placeholder="请选择"
+                    @change="updateProperties"
+                  />
                 </el-form-item>
               </template>
             </template>
             <el-form-item label="初始化用户变量">
-              <el-input v-model="form.initiator"
-                        size="mini"
-                        @change="v=>updateAttr('initiator',v)" />
+              <el-input
+                v-model="form.initiator"
+                size="mini"
+                @change="v=>updateAttr('initiator',v)"
+              />
             </el-form-item>
           </template>
           <template v-if="['bpmn:UserTask'].includes(businessObject.$type)">
             <el-form-item label="候选群">
-              <el-input v-model="form.candidateGroups"
-                        size="mini"
-                        @change="v=>updateAttr('candidateGroups',v)" />
+              <el-input
+                v-model="form.candidateGroups"
+                size="mini"
+                @change="v=>updateAttr('candidateGroups',v)"
+              />
             </el-form-item>
             <el-form-item label="候选人">
-              <el-input v-model="form.candidateUser"
-                        size="mini"
-                        @change="v=>updateAttr('candidateUser',v)" />
+              <el-input
+                v-model="form.candidateUser"
+                size="mini"
+                @change="v=>updateAttr('candidateUser',v)"
+              />
             </el-form-item>
             <el-form-item label="优先级别">
-              <el-input v-model="form.priority"
-                        size="mini"
-                        type="number"
-                        min="1"
-                        max="100"
-                        @change="v=>updateAttr('priority',v)" />
+              <el-input
+                v-model="form.priority"
+                size="mini"
+                type="number"
+                min="1"
+                max="100"
+                @change="v=>updateAttr('priority',v)"
+              />
             </el-form-item>
           </template>
           <template v-if="['bpmn:SequenceFlow'].includes(businessObject.$type)">
             <el-form-item label="Condition Type">
               {{ conditionType }}
-              <el-select v-model="conditionType"
-                         size="mini"
-                         style="width:100%"
-                         placeholder="请选择"
-                         @change="updateConditionType">
-                <el-option v-for="item in conditionTypeList"
-                           :key="item"
-                           :label="item"
-                           :value="item" />
+              <el-select
+                v-model="conditionType"
+                size="mini"
+                style="width:100%"
+                placeholder="请选择"
+                @change="updateConditionType"
+              >
+                <el-option
+                  v-for="item in conditionTypeList"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
               </el-select>
             </el-form-item>
-            <el-form-item v-if="conditionType=='Expression'"
-                          label="Expression">
-              <el-input v-model="form.conditionExpression.body"
-                        size="mini"
-                        @change="v=>updateAttr('conditionExpression',form.conditionExpression)" />
+            <el-form-item
+              v-if="conditionType=='Expression'"
+              label="Expression"
+            >
+              <el-input
+                v-model="form.conditionExpression.body"
+                size="mini"
+                @change="v=>updateAttr('conditionExpression',form.conditionExpression)"
+              />
             </el-form-item>
           </template>
-          <el-form-item v-if="form.documentation&&form.documentation[0]"
-                        label="描述">
-            <el-input v-model="form.documentation[0].text"
-                      type="textarea"
-                      size="mini"
-                      @change="v=>updateAttr('documentation',form.documentation)" />
+          <el-form-item
+            v-if="form.documentation&&form.documentation[0]"
+            label="描述"
+          >
+            <el-input
+              v-model="form.documentation[0].text"
+              type="textarea"
+              size="mini"
+              @change="v=>updateAttr('documentation',form.documentation)"
+            />
           </el-form-item>
         </el-tab-pane>
-        <el-tab-pane v-if="formType.includes(businessObject.$type)"
-                     label="表单"
-                     name="form">
+        <el-tab-pane
+          v-if="formType.includes(businessObject.$type)"
+          label="表单"
+          name="form"
+        >
           <el-form-item label="表单Id">
-            <el-input v-model="form.formKey"
-                      size="mini"
-                      @change="v=>updateAttr('formKey',v)" />
+            <el-input
+              v-model="form.formKey"
+              size="mini"
+              @change="v=>updateAttr('formKey',v)"
+            />
           </el-form-item>
           <el-form-item label="表单字段">
-            <el-button :disabled="!currentRow"
-                       class="tableBtn"
-                       type="text"
-                       @click="delFP"><i class="el-icon-remove" />
+            <el-button
+              :disabled="!currentRow"
+              class="tableBtn"
+              type="text"
+              @click="delFP"
+            ><i class="el-icon-remove" />
             </el-button>
-            <el-button class="tableBtn"
-                       type="text"
-                       @click="addFP"><i class="el-icon-circle-plus" /></el-button>
-            <el-table class="fpTable"
-                      border
-                      :show-header="false"
-                      :data="formProperty"
-                      style="width: 100%"
-                      highlight-current-row
-                      @current-change="handleCurrentChange">
+            <el-button
+              class="tableBtn"
+              type="text"
+              @click="addFP"
+            ><i class="el-icon-circle-plus" /></el-button>
+            <el-table
+              class="fpTable"
+              border
+              :show-header="false"
+              :data="formProperty"
+              style="width: 100%"
+              highlight-current-row
+              @current-change="handleCurrentChange"
+            >
               <el-table-column prop="id" />
             </el-table>
           </el-form-item>
           <template v-if="currentRow">
             <div class="title">字段属性</div>
             <el-form-item label="id">
-              <el-input v-model="currentRow.id"
-                        size="mini"
-                        @change="updateProperties" />
+              <el-input
+                v-model="currentRow.id"
+                size="mini"
+                @change="updateProperties"
+              />
             </el-form-item>
             <el-form-item label="类型">
-              <el-select v-model="currentRow.type"
-                         size="mini"
-                         style="width:100%"
-                         placeholder="请选择"
-                         @change="updateProperties">
-                <el-option v-for="item in formPropertyTypeList"
-                           :key="item"
-                           :label="item"
-                           :value="item" />
+              <el-select
+                v-model="currentRow.type"
+                size="mini"
+                style="width:100%"
+                placeholder="请选择"
+                @change="updateProperties"
+              >
+                <el-option
+                  v-for="item in formPropertyTypeList"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
               </el-select>
             </el-form-item>
             <el-form-item label="名称">
-              <el-input v-model="currentRow.name"
-                        size="mini"
-                        @change="updateProperties" />
+              <el-input
+                v-model="currentRow.name"
+                size="mini"
+                @change="updateProperties"
+              />
             </el-form-item>
             <el-form-item label="默认值">
-              <el-input v-model="currentRow.default"
-                        size="mini"
-                        @change="updateProperties" />
+              <el-input
+                v-model="currentRow.default"
+                size="mini"
+                @change="updateProperties"
+              />
             </el-form-item>
           </template>
         </el-tab-pane>
@@ -308,7 +372,7 @@ export default {
     updateConditionType (v) {
       if (!v) {
         this.businessObject.conditionExpression && delete this.businessObject.conditionExpression
-      } else if (v == 'Expression') {
+      } else if (v === 'Expression') {
         this.businessObject.conditionExpression = this.moddle.create('bpmn:FormalExpression', { body: '' })
       }
       this.updateProperties()
@@ -333,7 +397,7 @@ export default {
     },
     // 删除表单字段
     delFP () {
-      const i = this.formProperty.findIndex(e => e.id == this.currentRow.id)
+      const i = this.formProperty.findIndex(e => e.id === this.currentRow.id)
       this.formProperty.splice(i, 1)
       this.updateProperties()
     },

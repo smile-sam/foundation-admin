@@ -28,25 +28,25 @@
     <el-table
       :key="tableKey"
       v-loading="listLoading"
-      :data="list"      
+      :data="list"
       border
       fit
       highlight-current-row
       style="width: 100%;"
       @sort-change="sortChange"
     >
-    <!-- <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%" > -->
+      <!-- <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%" > -->
       <el-table-column :label="$t('table.id')" prop="id" type="index" :index="getTableIndex" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
         <!-- <template slot-scope="scope">
           <span> -->
-            <!-- {{ index }} -->
-             <!-- {{ scope.$index + (scope.pageNum -1) * scope.pageSize + 1 }} -->
-            <!-- {{ scope.row.id }} -->
-            <!-- {{ scope.$index+(pageNum - 1) * pageSize + 1}} -->
-          <!-- </span> -->
+        <!-- {{ index }} -->
+        <!-- {{ scope.$index + (scope.pageNum -1) * scope.pageSize + 1 }} -->
+        <!-- {{ scope.row.id }} -->
+        <!-- {{ scope.$index+(pageNum - 1) * pageSize + 1}} -->
+        <!-- </span> -->
         <!-- </template> -->
       </el-table-column>
-      <el-table-column align="center"  prop="name"  :label="$t('table.name')" sortable="custom" :class-name="getSortClass('name')">
+      <el-table-column align="center" prop="name" :label="$t('table.name')" sortable="custom" :class-name="getSortClass('name')">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
@@ -58,11 +58,11 @@
       </el-table-column>
       <el-table-column align="center" :label="$t('table.state')" width="80">
         <template slot-scope="scope">
-         <el-tag>{{ scope.row.stateName }}</el-tag>
+          <el-tag>{{ scope.row.stateName }}</el-tag>
         </template>
         <!-- <template slot-scope="{row}"> -->
 
-          <!-- <el-tag :type="row.state | statusFilter" v-if="row.state == 1">
+        <!-- <el-tag :type="row.state | statusFilter" v-if="row.state == 1">
              正常
           </el-tag>
           <el-tag :type="row.state | statusFilter" v-if="row.state == 0">
@@ -75,9 +75,9 @@
           <span>{{ scope.row.deletedName }}</span>
         </template>
       </el-table-column>
-      <el-table-column  prop="create_time"  align="center" :label="$t('table.createTime')" sortable="custom" :class-name="getSortClass('create_time')">
+      <el-table-column prop="create_time" align="center" :label="$t('table.createTime')" sortable="custom" :class-name="getSortClass('create_time')">
         <template slot-scope="scope">
-          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
+          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('table.createUserName')">
@@ -87,14 +87,24 @@
       </el-table-column>
       <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-           <el-button type="primary" size="mini" @click="handleUpdate(scope)">
+          <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope)"
+          >
             {{ $t('table.edit') }}
           </el-button>
-           <el-button type="danger" size="mini" @click="handleDelete(scope)">
+          <el-button
+            type="danger"
+            size="mini"
+            icon="el-icon-delete"
+            @click="handleDelete(scope)"
+          >
             {{ $t('table.delete') }}
           </el-button>
         </template>
-      </el-table-column> 
+      </el-table-column>
       <!-- <el-table-column width="180px" align="center" label="Date">
         <template slot-scope="scope">
           <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
@@ -140,11 +150,10 @@
       </el-table-column> -->
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"  @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
-      
     <el-dialog :title="generateTitle(textMap[dialogStatus])" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">      
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item :label="$t('table.code')" prop="code">
           <el-input v-model="temp.code" />
         </el-form-item>
@@ -156,7 +165,7 @@
             <el-option v-for="item in typeOptions" :key="item.key" :label="item.label" :value="item.key" />
           </el-select>
         </el-form-item>
-         <el-form-item :label="$t('table.state')" prop="state">
+        <el-form-item :label="$t('table.state')" prop="state">
           <el-select v-model="temp.state" class="filter-item" :placeholder="generateTitle('message.Please select')">
             <el-option v-for="item in stateOptions" :key="item.key" :label="item.label" :value="item.key" />
           </el-select>
@@ -178,8 +187,8 @@
         <el-form-item :label="$t('table.remark')">
           <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
         </el-form-item> -->
-         <el-form-item :label="$t('table.description')">
-          <el-input v-model="temp.description" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" :placeholder="generateTitle('message.Please input')"/>
+        <el-form-item :label="$t('table.description')">
+          <el-input v-model="temp.description" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" :placeholder="generateTitle('message.Please input')" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -207,24 +216,10 @@
 
 <script>
 import { generateTitle } from '@/utils/i18n'
-import { page, addRole, updateRole, deleteRole, getRole } from '@/api/user/role'
+import { page, addRole, updateRole, deleteRole } from '@/api/user/role'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
-
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
-
 
 export default {
   name: 'RoleList',
@@ -247,7 +242,7 @@ export default {
       pageNum: 1,
       pageSize: 15,
       total: 0,
-      pages: 0 ,
+      pages: 0,
       listLoading: true,
       listQuery: {
         pageNum: 1,
@@ -258,7 +253,6 @@ export default {
         sortField: '-createTime'
       },
       importanceOptions: [1, 2, 3],
-      calendarTypeOptions,
       typeOptions: [{ label: '正常', key: '1' }, { label: '禁用', key: '0' }],
       stateOptions: [{ label: '正常', key: '1' }, { label: '禁用', key: '0' }],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -308,7 +302,7 @@ export default {
         this.total = response.data.total
         this.pageNum = response.data.pageNum
         this.pageSize = response.data.pageSize
-        this.listLoading = false       
+        this.listLoading = false
 
         // Just to simulate the time of the request
         setTimeout(() => {
@@ -336,7 +330,7 @@ export default {
       if (prop === 'name') {
         this.sortByName(order)
       }
-      
+
       if (prop === 'create_time') {
         this.sortByCreateTime(order)
       }
@@ -401,14 +395,13 @@ export default {
               duration: 2000
             })
             this.getList()
-
           })
         }
       })
     },
     handleUpdate({ $index, row }) {
-      this.temp = Object.assign({}, row) // copy obj     
-      // 此处必须转类型不然导致选择框默认不选中  ，显示value值  
+      this.temp = Object.assign({}, row) // copy obj
+      // 此处必须转类型不然导致选择框默认不选中  ，显示value值
       // this.dictInfoForm.type = String(this.dictInfoForm.type);    //转换为String类型
       // this.dictInfoForm.type = Number(this.dictInfoForm.type);  //转换为Number类型
       this.temp.type = String(this.temp.type)
@@ -426,7 +419,6 @@ export default {
           const tempData = Object.assign({}, this.temp)
           // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateRole(tempData).then(response => {
-
             this.dialogFormVisible = false
             this.$notify({
               title: this.generateTitle('message.Success'),
@@ -435,7 +427,6 @@ export default {
               duration: 2000
             })
             this.getList()
-
 
             // const index = this.list.findIndex(v => v.id === this.temp.id)
             // this.list.splice(index, 1, this.temp)
@@ -454,23 +445,20 @@ export default {
       this.$confirm(this.generateTitle('message.Confirm to remove the role?'), this.generateTitle('message.Warning'), {
         confirmButtonText: this.generateTitle('table.confirm'),
         cancelButtonText: this.generateTitle('table.cancel'),
-        type: 'warning',
+        type: 'warning'
       })
         .then(async() => {
-          await deleteRole({id: row.id})
+          await deleteRole({ id: row.id })
           this.list.splice($index, 1)
           this.$message({
             type: 'success',
-            message:  this.generateTitle('message.Delete succed!')
+            message: this.generateTitle('message.Delete succed!')
           })
         })
         .catch(err => { console.error(err) })
-    },    
+    },
     handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
+
     },
     handleDownload() {
       this.downloadLoading = true
@@ -486,7 +474,7 @@ export default {
       //   this.downloadLoading = false
       // })
     },
-     formatJson(filterVal) {
+    formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
         if (j === 'timestamp') {
           return parseTime(v[j])
@@ -502,7 +490,7 @@ export default {
     getTableIndex (index) {
       // return index + 1;
       // return (this.dataForm.pageNum - 1) * this.dataForm.pageSize + index + 1;
-      return (this.pageNum - 1) * this.pageSize + index + 1;
+      return (this.pageNum - 1) * this.pageSize + index + 1
     }
   }
 }

@@ -1,6 +1,9 @@
 <template>
-  <div class="login-container">
-      
+  <div class="login-container note" :style="note">
+    <!-- <div class="background">
+      <img :src="backgroundImg" width="100%" height="100%" alt="">
+    </div>
+    <div class="front" /> -->
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
@@ -44,10 +47,25 @@
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
-
+      <el-form-item label="" prop="captchaCode">
+        <el-input
+          v-model="loginForm.captchaCode"
+          :placeholder="$t('login.captchaCode')"
+          prefix-icon="lj-icon-yanzhengma"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          maxlength="5"
+          style="float: left; width: 122px;"
+          @keyup.enter.native="handleLogin"
+        />
+        <div class="captcha_code">
+          <img ref="code" src="" style="height: 48px;float: right;" @click="changeCode">
+        </div>
+      </el-form-item>
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">  {{ $t('login.logIn') }}</el-button>
 
-     <div style="position:relative">
+      <!-- <div style="position:relative">
         <div class="tips">
           <span>{{ $t('login.username') }} : admin</span>
           <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
@@ -58,8 +76,7 @@
           </span>
           <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
         </div>
-      
-      </div>
+      </div> -->
     </el-form>
   </div>
 </template>
@@ -67,6 +84,9 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
+import { generateTitle } from '@/utils/i18n'
+import { getCaptchaCode } from '@/api/user/captcha'
+
 export default {
   name: 'Login',
   components: { LangSelect },
@@ -85,18 +105,41 @@ export default {
         callback()
       }
     }
+    const validateCaptchaCode = (rule, value, callback) => {
+      if (value == null || typeof (value) === 'undefined' || value.length < 5) {
+        const mssage = this.generateTitle('message.please input correct captchaCode')
+        callback(new Error(mssage))
+      } else {
+        callback()
+      }
+    }
     return {
+      note: {
+        backgroundImage: 'url(' + require('../../assets/images/bg/bg1.jpg') + ')',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        // backgroundSize: '800px auto',
+        backgroundSize: '2000px auto',
+        // backgroundSize: '.18rem .32rem',
+        marginTop: '0'
+
+      },
       loginForm: {
         username: 'admin',
-        password: '111111'
+        password: '123456',
+        captchaKey: '',
+        captchaCode: '88888',
+        captchaToken: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        captchaCode: [{ required: true, trigger: 'blur', validator: validateCaptchaCode }]
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      backgroundImg: require('../../assets/images/bg/bg1.jpg')
     }
   },
   watch: {
@@ -107,7 +150,41 @@ export default {
       immediate: true
     }
   },
+  mounted() {
+    this.changeCode()
+  },
   methods: {
+    generateTitle,
+    getCaptchaCode() {
+      getCaptchaCode().then(response => {
+        console.log(response)
+        this.loginForm.captchaToken = response.data.token
+        localStorage.setItem('captchaToken', response.data.token)
+        this.$refs.code.src = 'data:image/jpeg;base64,' + response.data.img
+      })
+    },
+    getCaptchaKey() {
+      const captchaKey = Math.random()
+        .toString(36)
+        .substring(2)
+      return captchaKey
+    },
+    changeCode() {
+      this.getCaptchaCode()
+      // const captchaKey = this.getCaptchaKey()
+      // this.loginForm.captchaKey = captchaKey
+      // this.$refs.code.setAttribute(
+      //   'src',
+      //   '/user/createImageCode?captchaKey=' +
+      //     captchaKey
+      // )
+      // this.$refs.code.setAttribute(
+      //   'src',
+      //   process.env.VUE_APP_API_URL +
+      //     'auth/get_captcha?captcha_key=' +
+      //     captcha_key
+      // )
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -185,6 +262,7 @@ $cursor: #fff;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
+    height: 48px;
   }
 }
 </style>
@@ -259,5 +337,17 @@ $light_gray:#eee;
     cursor: pointer;
     user-select: none;
   }
+
+}
+.background{
+    width:100%;
+    height:100%;  /**宽高100%是为了图片铺满屏幕 */
+    z-index:-100;
+    position: absolute;
+}
+
+.front{
+    z-index:1;
+    position: absolute;
 }
 </style>

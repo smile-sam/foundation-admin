@@ -196,6 +196,8 @@ export default {
       selectNode: {},
       headNode: {},
       headResolve: undefined,
+      parentNode: {},
+      parentResolve: undefined,
       isLoadingOrganizations: true,
       expandAll: false,
       tableKey: 0,
@@ -262,6 +264,11 @@ export default {
           if (item.children) {
             item.children.forEach(i => {
               this.expandedKeys.push(i.id)
+              if (i.children) {
+                i.children.forEach(t => {
+                  this.expandedKeys.push(t.id)
+                })
+              }
             })
           }
         })
@@ -299,6 +306,8 @@ export default {
         // 根据父节点id找寻下一级的所有节点
         const param = this.listQuery
         param.parentId = node.data.id
+        this.parentNode = node.parent
+        this.parentResolve = resolve
         list(param).then(res => {
           if (res.data) {
             this.isLoadingOrganizations = false
@@ -313,13 +322,32 @@ export default {
           return resolve(data)
         })
       } else {	// 懒加载方法
-        console.log('懒加载方法')
-        setTimeout(() => {
-          resolve([{
-            name: `懒加载第${node.level + 1}级` + +new Date(),
-            id: `${+new Date()}`
-          }])
-        }, 500)
+        // 根据父节点id找寻下一级的所有节点
+        const param = this.listQuery
+        param.parentId = node.data.id
+        this.parentNode = node.parent
+        this.parentResolve = resolve
+        list(param).then(res => {
+          if (res.data) {
+            this.isLoadingOrganizations = false
+            // this.expandedKeys.push(res.data.id)
+            return resolve(res.data)
+          } else {
+            this.$message.error(res.message)
+          }
+        }).catch(() => {
+          this.isLoadingOrganizations = false
+          const data = []
+          return resolve(data)
+        })
+
+        // console.log('懒加载方法')
+        // setTimeout(() => {
+        //   resolve([{
+        //     name: `懒加载第${node.level + 1}级` + +new Date(),
+        //     id: `${+new Date()}`
+        //   }])
+        // }, 500)
       }
     },
     handleCreate (data) {
@@ -368,7 +396,8 @@ export default {
         this.temp.parentId = node.parent.data.id
         this.temp.parentName = node.parent.data.name
       }
-
+      this.parentNode = node.parentNode
+      this.selectNode = node
       this.tempCurrentNode = node
       this.temp.type = String(this.temp.type)
       this.temp.state = String(this.temp.state)
@@ -391,14 +420,20 @@ export default {
               type: 'success',
               duration: 2000
             })
-            if (typeof (tempData.parentId) === 'undefined' || tempData.parentId === 0) {
-              // this.refreshNodeBy(tempData.id)
-              this.headNode.childNodes = []// 把存起来的node的子节点清空，不然会界面会出现重复树！
-              this.loadNode(this.headNode, this.headResolve)// 再次执行懒加载的方法
-              this.headNode.expand
-            } else {
-              this.refreshNodeBy(tempData.parentId)
-            }
+            // 1、一次性把节点全部加载出来，就重新请求
+            this.queryOrgTree()
+
+            // 2、异步请求刷新节点的方式
+            // if (typeof (tempData.parentId) === 'undefined' || tempData.parentId === 0) {
+            //   this.headNode.childNodes = []// 把存起来的node的子节点清空，不然会界面会出现重复树！
+            //   this.loadNode(this.headNode, this.headResolve)// 再次执行懒加载的方法
+            //   this.headNode.expand
+            // } else {
+            //   this.parentNode.childNodes = []// 把存起来的node的子节点清空，不然会界面会出现重复树！
+            //   this.loadNode(this.parentNode, this.parentResolve)// 再次执行懒加载的方法
+            //   this.parentNode.expand
+            //   this.refreshNodeBy(tempData.parentId)
+            // }
           })
         }
       })
@@ -446,7 +481,6 @@ export default {
     // id是节点的data参数，不是node参数
     refreshNodeBy (id) {
       const node = this.$refs.organization.getNode(id) // 通过节点id找到对应树节点对象
-
       node.loaded = false
       node.expand() // 主动调用展开节点方法，重新查询该节点下的所有子节点
     },

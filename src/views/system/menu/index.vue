@@ -284,11 +284,11 @@ import { generateTitle } from '@/utils/i18n'
 import { queryMenuTree, list, addMenu, updateMenu, deleteMenu } from '@/api/user/menu'
 import { parseTime } from '@/utils'
 
-import MenuSelect from '@/components/MenuSelect'
+// import MenuSelect from '@/components/MenuSelect'
 
 export default {
   name: 'MenuList',
-  components: { MenuSelect },
+  // components: { MenuSelect },
   filters: {
     statusFilter (status) {
       const statusMap = {
@@ -467,7 +467,7 @@ export default {
       console.log(node)
       this.temp = Object.assign({}, data) // copy obj
       // 此处必须转类型不然导致选择框默认不选中  ，显示value值
-      if (node.level == 0) {
+      if (node.level === 0) {
         this.temp.parentId = 0
         this.temp.parentName = ''
       } else {
